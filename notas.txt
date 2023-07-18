@@ -1,3 +1,5 @@
+https://www.youtube.com/watch?v=nqu9Zt68J_M
+
 crear carpeta react-express-socketio/server
 nom init -y
 // socket io nos ayuda interaccion en tiempo real frontend-backend
@@ -627,3 +629,5 @@ index.css
 
 // ejecutar en consola frontend
 npm run dev
+
+43:26 / 49:55

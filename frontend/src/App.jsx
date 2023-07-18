@@ -42,8 +42,11 @@ const App = props => {
   return (
     <div className='h-screen bg-zinc-800 text-white flex items-center justify-center'>
 
-      <form onSubmit={handleSubmmit}>
-        <input type="text" placeholder='Write your message...'
+      <form onSubmit={handleSubmmit} className=' bg-zinc-900 p-10'>
+        <h1 className=' text-2xl font-bold my-2'>Chat React</h1>
+        <input type="text" 
+         placeholder='Write your message...'
+         className='border-2 border-zinc-500 p-2 w-full'
          onChange={(e) => setMessage(e.target.value)}
         />
         <button>
