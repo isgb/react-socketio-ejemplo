@@ -1,0 +1,629 @@
+crear carpeta react-express-socketio/server
+nom init -y
+// socket io nos ayuda interaccion en tiempo real frontend-backend
+// morgan ver epticiones por el bakcend
+npm i cors express socket.io morgan
+
+//nodemon: nos permite reinciar el codiog cada vez qye ahvcemos un cambio
+npm i nodemon -D
+
+// crear carpeta index.js en server
+
+// activar en el pacckage.json la propiedad type: module
+//para utilizar los modules de javascripts en ves de los reuqire de express
+.......
+  "main": "index.js",
+  "type": "module",
+...........
+
+// en index.js
+
+import express from "express";
+
+const app = express()
+
+
+app.listen(3000)
+console.log('Server on port', 3000)
+
+// ejecutar en consola
+node server/index.js
+
+//en navegador http://localhost:3000/
+
+// en package.json para automatizar el comando nodemon
+......
+ "scripts": {
+    "dev": "nodemon server/index.js",
+    .....
+  },
+
+// ejecutar
+npm run dev
+
+// en index.js implementar modulos socket.io
+
+import express from "express";
+import http from 'http';
+import {Server as SocketServer} from 'socket.io';
+
+const app = express()
+const server = http.createServer(app)
+const io = new SocketServer(server)
+
+server.listen(3000)
+console.log('Server on port', 3000)
+
+// detener servidor y ejecutar 
+npm create vite
+name: frontend
+React
+Javascript
+
+// ejecutar cd frontend
+// npm install
+// npm run dev
+
+// ubicarnos en la carpeta principal y ejecutar
+npm run dev
+
+// en index.js
+
+import express from "express";
+import http from 'http';
+import {Server as SocketServer} from 'socket.io';
+
+const app = express()
+const server = http.createServer(app)
+const io = new SocketServer(server)
+
+io.on('connection', socket => {
+    console.log('Client connected');
+})
+
+server.listen(3000)
+console.log('Server on port', 3000)
+
+// en app.js
+
+
+const App = props => {
+  return (
+    <div>Hello World</div>
+  )
+}
+
+export default App
+
+// Ir a la carpeta frontend e instalar
+npm i socket.io-client
+
+// ejecutar
+npm run dev
+
+// App.js
+import io from 'socket.io-client'
+
+const socket = io('http://localhost:3000/')
+
+const App = props => {
+  return (
+    <div>Hello World</div>
+  )
+}
+
+export default App
+
+// index.js
+
+import express from "express";
+import http from 'http';
+import {Server as SocketServer} from 'socket.io';
+
+const app = express()
+const server = http.createServer(app)
+const io = new SocketServer(server, {
+    cors:{
+        origin: "http://localhost:5173"
+    }
+})
+
+io.on('connection', socket => {
+    console.log('Client connected');
+})
+
+server.listen(3000)
+console.log('Server on port', 3000)
+
+// cambiar en index.js
+
+import express from "express";
+import http from 'http';
+import {Server as SocketServer} from 'socket.io';
+
+const app = express()
+const server = http.createServer(app)
+// const io = new SocketServer(server, {
+//     cors:{
+//         origin: "http://localhost:5173"
+//     }
+// })
+
+const io = new SocketServer(server)
+
+io.on('connection', socket => {
+    console.log('Client connected');
+})
+
+server.listen(3000)
+console.log('Server on port', 3000)
+
+// vite.config.js 16.12
+
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    proxy: {
+      '/socket.io': {
+        target: 'http://localhost:3000/',
+        ws: true
+      }
+    }
+  }
+})
+
+
+// en app.js
+
+import io from 'socket.io-client'
+
+const socket = io('/')
+
+const App = props => {
+  return (
+    <div>Hello World</div>
+  )
+}
+
+export default App
+
+// IMPELMENTANDO SOCKET.IO
+// EN APP.JS
+
+import { useState } from 'react';
+import io from 'socket.io-client';
+
+const socket = io('/');
+
+const App = props => {
+
+  const [message, setMessage] = useState('');
+
+  function handleSubmmit(e){
+      e.preventDefault();
+      console.log(message);
+  };
+
+  return (
+    <div>
+
+      <form onSubmit={handleSubmmit}>
+        <input type="text" placeholder='Write your message...'
+         onChange={(e) => setMessage(e.target.value)}
+        />
+        <button>
+          Send
+        </button>
+      </form>
+
+    </div>
+  )
+}
+
+export default App
+
+
+// en index.js
+
+import express from "express";
+import http from 'http';
+import {Server as SocketServer} from 'socket.io';
+
+const app = express()
+const server = http.createServer(app)
+// const io = new SocketServer(server, {
+//     cors:{
+//         origin: "http://localhost:5173"
+//     }
+// })
+const io = new SocketServer(server)
+
+io.on('connection', socket => {
+    console.log('Client connected');
+
+    socket.on('message', (data) =>{
+        console.log(data)
+    })
+})
+
+server.listen(3000)
+console.log('Server on port', 3000)
+
+// Agregar en package.json para ignorar frontend en consola y no lo recarge y no mande error
+
+ "scripts": {
+    "dev": "nodemon server/index.js --ignore frontend",
+    ....
+  },
+
+// reiniciar las dos consolas con npm run dev
+
+//enviar mensaje a consola server App.js
+
+import { useState } from 'react';
+import io from 'socket.io-client';
+
+const socket = io('/');
+
+const App = props => {
+
+  const [message, setMessage] = useState('');
+
+  function handleSubmmit(e){
+      e.preventDefault();
+      // console.log(message);
+
+      // para mandarlo al consola server
+      socket.emit('message', message)
+  };
+
+  return (
+    <div>
+
+      <form onSubmit={handleSubmmit}>
+        <input type="text" placeholder='Write your message...'
+         onChange={(e) => setMessage(e.target.value)}
+        />
+        <button>
+          Send
+        </button>
+      </form>
+
+    </div>
+  )
+}
+
+export default App
+
+
+// comunicar a los forntend-client en index.js
+
+import express from "express";
+import http from 'http';
+import {Server as SocketServer} from 'socket.io';
+
+const app = express()
+const server = http.createServer(app)
+// const io = new SocketServer(server, {
+//     cors:{
+//         origin: "http://localhost:5173"
+//     }
+// })
+const io = new SocketServer(server)
+
+io.on('connection', socket => {
+    console.log('Client connected');
+
+    // evento que el frontend escucha al backend
+    socket.on('message', (data) =>{
+        // console.log(data)
+
+        // CUnado elbackend tiene el mensaje se le dice a todos los clientes
+        // este evento el backend envia al frontend
+        console.log(data)
+        socket.broadcast.emit('message', data)
+    })
+})
+
+server.listen(3000)
+console.log('Server on port', 3000)
+
+// App.js
+
+import { useEffect, useState } from 'react';
+import io from 'socket.io-client';
+
+const socket = io('/');
+
+const App = props => {
+
+  const [message, setMessage] = useState('');
+
+  function handleSubmmit(e){
+      e.preventDefault();
+      // console.log(message);
+      // para mandarlo al consola server/ backend
+      socket.emit('message', message)
+  };
+
+  useEffect(() =>{
+    // escuchar y renderizar al server
+    socket.on('message', message =>{
+      console.log(message);
+    })
+  },[])
+
+  return (
+    <div>
+
+      <form onSubmit={handleSubmmit}>
+        <input type="text" placeholder='Write your message...'
+         onChange={(e) => setMessage(e.target.value)}
+        />
+        <button>
+          Send
+        </button>
+      </form>
+
+    </div>
+  )
+}
+
+export default App
+
+// APP.js
+
+import { useEffect, useState } from 'react';
+import io from 'socket.io-client';
+
+const socket = io('/');
+
+const App = props => {
+
+  const [message, setMessage] = useState('');
+  const [messages, SetMessages] = useState([])
+
+  function handleSubmmit(e){
+      e.preventDefault();
+      // console.log(message);
+      // para mandarlo al consola server/ backend
+      socket.emit('message', message)
+  };
+
+  useEffect(() =>{
+    // escuchar y renderizar al server
+    socket.on('message', message =>{
+      console.log(message);
+      SetMessages([...messages, message])
+    })
+  },[])
+
+  return (
+    <div>
+
+      <form onSubmit={handleSubmmit}>
+        <input type="text" placeholder='Write your message...'
+         onChange={(e) => setMessage(e.target.value)}
+        />
+        <button>
+          Send
+        </button>
+      </form>
+
+      <ul>
+        {
+          messages.map((message,i) => (
+            <li key={i}>{message}</li>
+          ))
+        }
+      </ul>
+
+    </div>
+  )
+}
+
+export default App
+
+// Ver los mensajes en mi propia pantalla App.js
+
+import { useEffect, useState } from 'react';
+import io from 'socket.io-client';
+
+const socket = io('/');
+
+const App = props => {
+
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([])
+
+  function handleSubmmit(e){
+      e.preventDefault();
+      // console.log(message);
+      // para mandarlo al consola server/ backend
+      setMessages([...messages,message])
+      socket.emit('message', message)
+  };
+
+  useEffect(() =>{
+    // escuchar y renderizar al server
+    socket.on('message', receiveMessage);
+    
+    return () => {
+      // Apagar el evento para que no vuelva a renderizar
+      socket.off("message", receiveMessage);
+    };
+
+  },[]);
+
+  const receiveMessage = (message) =>{ 
+        // state: es el state anterior
+        
+        setMessages(state => [...state, message])
+        // console.log(message)
+      }
+
+  return (
+    <div>
+
+      <form onSubmit={handleSubmmit}>
+        <input type="text" placeholder='Write your message...'
+         onChange={(e) => setMessage(e.target.value)}
+        />
+        <button>
+          Send
+        </button>
+      </form>
+
+      <ul>
+        {
+          messages.map((message,i) => (
+            <li key={i}>
+              {message.from} : {message.body}
+            </li>
+          ))
+        }
+      </ul>
+
+    </div>
+  )
+}
+
+export default App
+
+// Avisar quien envio el mensaje alos clientes
+
+import express from "express";
+import http from 'http';
+import {Server as SocketServer} from 'socket.io';
+
+const app = express()
+const server = http.createServer(app)
+// const io = new SocketServer(server, {
+//     cors:{
+//         origin: "http://localhost:5173"
+//     }
+// })
+const io = new SocketServer(server)
+
+io.on('connection', socket => {
+    console.log('Client connected');
+    console.log(socket.id)
+
+    // evento que el frontend escucha al backend
+    socket.on('message', (body) =>{
+        // console.log(data)
+        // CUnado elbackend tiene el mensaje se le dice a todos los clientes
+        // este evento el backend envia al frontend
+        console.log(body)
+        socket.broadcast.emit('message', {
+            body,
+            from: socket.id.slice(6) // cortar a solo 6 caracteres
+        })
+    })
+})
+
+server.listen(3000)
+console.log('Server on port', 3000)
+
+// En app.js
+
+import { useEffect, useState } from 'react';
+import io from 'socket.io-client';
+
+const socket = io('/');
+
+const App = props => {
+
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([])
+
+  function handleSubmmit(e){
+      e.preventDefault();
+      // console.log(message);
+      // para mandarlo al consola server/ backend
+      const newMessage = {
+        body: message,
+        from: 'Me'
+      }
+
+      setMessages([...messages,newMessage])
+      socket.emit('message', message)
+  };
+
+  useEffect(() =>{
+    // escuchar y renderizar al server
+    socket.on('message', receiveMessage);
+    
+    return () => {
+      // Apagar el evento para que no vuelva a renderizar
+      socket.off("message", receiveMessage);
+    };
+
+  },[]);
+
+  const receiveMessage = (message) =>{ 
+        // state: es el state anterior
+        
+        setMessages(state => [...state, message])
+        // console.log(message)
+      }
+
+  return (
+    <div>
+
+      <form onSubmit={handleSubmmit}>
+        <input type="text" placeholder='Write your message...'
+         onChange={(e) => setMessage(e.target.value)}
+        />
+        <button>
+          Send
+        </button>
+      </form>
+
+      <ul>
+        {
+          messages.map((message,i) => (
+            <li key={i}>
+              {message.from} : {message.body}
+            </li>
+          ))
+        }
+      </ul>
+
+    </div>
+  )
+}
+
+export default App
+
+// instalar Tailwind en la consola del frontend
+
+https://tailwindcss.com/docs/guides/vite
+
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+
+index.css
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// ejecutar en consola frontend
+npm run dev
