@@ -40,7 +40,7 @@ const App = props => {
       }
 
   return (
-    <div>
+    <div className='h-screen bg-zinc-800 text-white flex items-center justify-center'>
 
       <form onSubmit={handleSubmmit}>
         <input type="text" placeholder='Write your message...'
